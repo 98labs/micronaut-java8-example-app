@@ -1,0 +1,15 @@
+micronaut:
+  application:
+    name: mbtc-system-api-todo
+
+datasources:
+  default:
+    url: jdbc:oracle:thin:@tcp://localhost:1521/ORCLCDB
+    driverClassName: oracle.jdbc.OracleDriver
+    username: TEST_USERNAME
+    password: TEST_PASSWORD
+
+data:
+  jdbc:
+    mapper:
+      dialect: ORACLE

@@ -1,0 +1,19 @@
+micronaut:
+  application:
+    name: micronaut-java8-example-app
+  # server:
+  #   port: 8080
+  #   context-path: "/"
+
+datasources:
+  default:
+    url: jdbc:oracle:thin:@tcp://localhost:1521/ORCLCDB
+    driverClassName: oracle.jdbc.OracleDriver
+    username: USERNAME
+    password: PASSWORD
+    # jndiName: "jdbc/SampleJNDI"
+
+data:
+  jdbc:
+    mapper:
+      dialect: ORACLE

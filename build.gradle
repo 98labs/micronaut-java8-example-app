@@ -1,0 +1,78 @@
+plugins {
+    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("io.micronaut.application") version "3.7.9"
+    id("io.micronaut.test-resources") version "3.7.9"
+    id("io.micronaut.aot") version "3.7.9"
+    id "war"
+}
+
+version = "0.1"
+group = "com.example.todo"
+
+repositories {
+    mavenCentral()
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+}
+
+// Set to `true` to run the app locally using netty.
+// Set to `false` to build the war for application server.
+def useNetty = false
+
+dependencies {
+    annotationProcessor("io.micronaut.data:micronaut-data-processor")
+    annotationProcessor("io.micronaut:micronaut-http-validation")
+    implementation("io.micronaut:micronaut-http-client")
+    implementation("io.micronaut:micronaut-jackson-databind")
+    implementation("io.micronaut.data:micronaut-data-jdbc")
+    implementation("io.micronaut.sql:micronaut-jdbc-ucp")
+    implementation("jakarta.annotation:jakarta.annotation-api")
+    runtimeOnly("com.oracle.database.jdbc:ojdbc8")
+    runtimeOnly("org.slf4j:slf4j-simple")
+    runtimeOnly("org.yaml:snakeyaml")
+
+    if (!useNetty) {
+        implementation("io.micronaut.servlet:micronaut-servlet-engine")
+    }
+}
+
+
+application {
+    mainClass = "com.example.todo.Application"
+}
+java {
+    sourceCompatibility = JavaVersion.toVersion("1.8")
+    targetCompatibility = JavaVersion.toVersion("1.8")
+}
+
+
+graalvmNative.toolchainDetection = false
+
+micronaut {
+    if (useNetty) {
+        runtime("netty")
+    }
+    testRuntime("junit5")
+    processing {
+        incremental(true)
+        annotations("com.example.todo.*")
+    }
+    aot {
+        // Please review carefully the optimizations enabled below
+        // Check https://micronaut-projects.github.io/micronaut-aot/latest/guide/ for more details
+        optimizeServiceLoading = false
+        convertYamlToJava = false
+        precomputeOperations = true
+        cacheEnvironment = true
+        optimizeClassLoading = true
+        deduceEnvironment = true
+        optimizeNetty = true
+        replaceLogbackXml = true
+    }
+}
+
+
+tasks.named("dockerfileNative") {
+    jdkVersion = "8"
+}
